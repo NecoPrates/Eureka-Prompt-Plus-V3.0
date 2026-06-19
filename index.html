@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eureka Prompt Plus V3.0 - Engenharia Avançada</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #2980b9; }
+        textarea, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; resize: vertical; }
+        .full-width { grid-column: span 2; }
+        button { width: 100%; padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        button:hover { background-color: #219150; }
+        #output-container { margin-top: 30px; }
+        #finalPrompt { background-color: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Eureka Prompt Plus V3.0</h1>
+    <p style="text-align: center; font-style: italic;">Baseado na metodologia P.R.O.M.P.T. e Engenharia de Contexto</p>
+
+    <div class="grid">
+        <!-- P - PERSONA -->
+        <div>
+            <label>Persona (Quem a IA deve ser?)</label>
+            <textarea id="persona" placeholder="Ex: Você é um especialista em Copywriting com 10 anos de experiência..."></textarea>
+        </div>
+        <!-- R - ROTEIRO -->
+        <div>
+            <label>Roteiro (O que deve ser feito?)</label>
+            <textarea id="roteiro" placeholder="Ex: Escreva uma sequência de 3 e-mails de vendas..."></textarea>
+        </div>
+        <!-- O - OBJETIVO -->
+        <div>
+            <label>Objetivo (Qual o resultado esperado?)</label>
+            <textarea id="objetivo" placeholder="Ex: Converter leads frios em compradores do curso X..."></textarea>
+        </div>
+        <!-- M - MODELO -->
+        <div>
+            <label>Modelo (Formato da Saída)</label>
+            <textarea id="modelo" placeholder="Ex: Texto em Markdown, com títulos em negrito e listas..."></textarea>
+        </div>
+        <!-- P - PANORAMA -->
+        <div class="full-width">
+            <label>Panorama / Contexto (Dados, Variáveis {{...}} e Informações extras)</label>
+            <textarea id="panorama" rows="4" placeholder="Insira o contexto ou documentos aqui. Use {{variavel}} para campos dinâmicos."></textarea>
+        </div>
+        <!-- FEW-SHOT -->
+        <div class="full-width">
+            <label>Exemplos (Few-Shot - Mostre à IA como você quer a resposta)</label>
+            <textarea id="exemplos" rows="3" placeholder="Insira aqui 1 ou 2 exemplos de boas respostas anteriores..."></textarea>
+        </div>
+        <!-- T - TRANSFORMAR -->
+        <div class="full-width">
+            <label>Transformar (Refinamentos e Regras de Segurança)</label>
+            <textarea id="transformar" placeholder="Ex: Use um tom amigável, evite jargões técnicos..."></textarea>
+        </div>
+    </div>
+
+    <button onclick="gerarPrompt()">Gerar Prompt Estruturado 🚀</button>
+
+    <div id="output-container">
+        <label>Seu Prompt Otimizado (Copie e cole na sua IA):</label>
+        <div id="finalPrompt">O prompt aparecerá aqui...</div>
+    </div>
+</div>
+
+<script>
+    function gerarPrompt() {
+        const p = document.getElementById('persona').value;
+        const r = document.getElementById('roteiro').value;
+        const o = document.getElementById('objetivo').value;
+        const m = document.getElementById('modelo').value;
+        const pan = document.getElementById('panorama').value;
+        const ex = document.getElementById('exemplos').value;
+        const t = document.getElementById('transformar').value;
+
+        let promptCompilado = `# DIRETRIZES DE EXECUÇÃO\n\n`;
+        
+        if(p) promptCompilado += `<persona>\n${p}\n</persona>\n\n`;
+        if(r) promptCompilado += `<instrucoes_tarefa>\n${r}\n</instrucoes_tarefa>\n\n`;
+        if(o) promptCompilado += `<objetivo_final>\n${o}\n</objetivo_final>\n\n`;
+        
+        promptCompilado += `## PROCESSO DE RACIOCÍNIO\n`;
+        promptCompilado += `1. Pense passo a passo (Chain of Thought) antes de gerar a saída final.\n`;
+        promptCompilado += `2. Certifique-se de que a resposta segue o formato solicitado em <formato_saida>.\n\n`;
+
+        if(pan) promptCompilado += `<contexto_e_dados>\n${pan}\n</contexto_e_dados>\n\n`;
+        if(ex) promptCompilado += `<exemplos_referencia>\n${ex}\n</exemplos_referencia>\n\n`;
+        if(m) promptCompilado += `<formato_saida>\n${m}\n</formato_saida>\n\n`;
+        if(t) promptCompilado += `<refinamentos_estilo>\n${t}\n</refinamentos_estilo>\n\n`;
+
+        promptCompilado += `## REGRAS DE SEGURANÇA E QUALIDADE\n`;
+        promptCompilado += `- Se você não tiver informações suficientes ou não souber a resposta, diga explicitamente que não sabe.\n`;
+        promptCompilado += `- Evite alucinações: baseie-se estritamente nos dados fornecidos em <contexto_e_dados>.\n`;
+        promptCompilado += `- Utilize formatação Markdown para clareza visual.`;
+
+        document.getElementById('finalPrompt').innerText = promptCompilado;
+    }
+</script>
+
+</body>
+</html>
