@@ -5,186 +5,250 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eureka Prompt Plus V3.2 - Master Edition</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; color: #1a1a1a; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; border-bottom: 3px solid #3498db; padding-bottom: 10px; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-style: italic; }
+        :root { --primary: #2980b9; --accent: #e67e22; --dark: #2c3e50; --light: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light); padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: var(--dark); text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 0.9em; }
+        
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .field-group { display: flex; flex-direction: column; }
-        label { font-weight: bold; margin-bottom: 5px; color: #2980b9; display: flex; justify-content: space-between; }
-        select { padding: 8px; border-radius: 5px; border: 1px solid #bdc3c7; margin-bottom: 8px; background: #ecf0f1; font-size: 0.9em; cursor: pointer; }
-        textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; resize: vertical; min-height: 80px; font-size: 14px; }
         .full-width { grid-column: span 2; }
-        button { width: 100%; padding: 18px; background-color: #2980b9; color: white; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: 0.3s; }
-        button:hover { background-color: #1a5276; transform: translateY(-2px); }
-        #finalPrompt { background-color: #1c2833; color: #d5dbdb; padding: 25px; border-radius: 10px; white-space: pre-wrap; font-family: 'Consolas', monospace; margin-top: 20px; border-left: 10px solid #3498db; }
-        .badge { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; }
+        
+        .field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        label { font-weight: bold; color: var(--primary); display: flex; align-items: center; }
+        .help-btn { cursor: pointer; color: #7f8c8d; margin-left: 8px; font-size: 0.9em; border: 1px solid #ccc; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; justify-content: center; align-items: center; }
+        
+        select { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd; background: #f9f9f9; margin-bottom: 8px; cursor: pointer; }
+        textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; resize: vertical; font-size: 14px; }
+        
+        /* Ajuste de Dimensões Conforme solicitado */
+        #roteiro, #objetivo, #panorama { height: 150px; }
+        #persona, #modelo, #transformar { height: 100px; }
+
+        .footer-disclaimer { font-size: 11px; color: #7f8c8d; text-align: center; margin-top: 25px; font-style: italic; }
+        
+        .button-group { display: flex; gap: 10px; margin-top: 15px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-generate { background-color: var(--primary); color: white; }
+        .btn-copy { background-color: #27ae60; color: white; display: none; }
+        .btn-save { background-color: var(--accent); color: white; display: none; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        #output-area { margin-top: 30px; }
+        #finalPrompt { background-color: #1c2833; color: #ecf0f1; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; border-left: 5px solid var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Eureka Prompt Plus V3.2</h1>
-    <p class="subtitle">Engenharia de Prompt Avançada com Protocolos de Raciocínio</p>
+    <p class="subtitle">Engenharia de Contexto & Protocolos de Raciocínio Ativados</p>
 
     <div class="grid">
         <!-- PERSONA -->
-        <div class="field-group">
-            <label>Persona (P) <span>Expertise</span></label>
-            <select onchange="fillField('persona', this.value)">
-                <option value="">-- Selecione 10 Exemplos --</option>
+        <div>
+            <div class="field-header">
+                <label>Persona (P) <span class="help-btn" onclick="ajuda('persona')">?</span></label>
+            </div>
+            <select onchange="preencher('persona', this.value)">
+                <option value="">-- Exemplos de Persona --</option>
                 <option value="Você é um Mestre em Marketing e Psicologia do Consumidor com 20 anos de experiência em copy de alta conversão.">Mestre em Marketing</option>
                 <option value="Você é um Engenheiro de Software Sênior especialista em arquitetura de sistemas e Clean Code.">Engenheiro Sênior</option>
                 <option value="Você é um Professor Socrático que guia o aluno através de perguntas em vez de dar respostas diretas.">Professor Socrático</option>
-                <option value="Você é um Editor de Livros rigoroso, focado em clareza, ritmo narrativo e eliminação de clichês.">Editor de Livros</option>
-                <option value="Você é um Analista de Dados especializado em extrair insights estratégicos de grandes volumes de texto.">Analista de Dados</option>
-                <option value="Você é um Especialista em Atendimento ao Cliente focado em empatia e resolução rápida de conflitos.">Customer Success</option>
-                <option value="Você é um Consultor Jurídico especializado em termos de uso e conformidade digital (LGPD).">Consultor Jurídico</option>
-                <option value="Você é um Treinador de Alta Performance focado em produtividade e biohacking.">Coach de Performance</option>
-                <option value="Você é um Especialista em SEO que entende profundamente os algoritmos de busca e intenção do usuário.">Especialista em SEO</option>
-                <option value="Você é um Storyteller profissional especializado na Jornada do Herói aplicada a negócios.">Storyteller de Negócios</option>
+                <option value="Você é um Editor de Livros rigoroso, focado em clareza e ritmo narrativo.">Editor de Livros</option>
+                <option value="Você é um Analista de Dados especializado em extrair insights estratégicos de textos longos.">Analista de Dados</option>
+                <option value="Você é um Especialista em Atendimento ao Cliente focado em empatia e resolução de conflitos.">Customer Success</option>
+                <option value="Você é um Consultor Jurídico especializado em conformidade digital e LGPD.">Consultor Jurídico</option>
+                <option value="Você é um Coach de Alta Performance focado em produtividade e biohacking.">Coach de Performance</option>
+                <option value="Você é um Especialista em SEO que entende profundamente intenção de busca.">Especialista em SEO</option>
+                <option value="Você é um Storyteller profissional especializado na Jornada do Herói aplicada a negócios.">Storyteller</option>
             </select>
-            <textarea id="persona" placeholder="Descreva a identidade da IA..."></textarea>
-        </div>
-
-        <!-- ROTEIRO -->
-        <div class="field-group">
-            <label>Roteiro (R) <span>Tarefa</span></label>
-            <select onchange="fillField('roteiro', this.value)">
-                <option value="">-- Selecione 10 Exemplos --</option>
-                <option value="Escreva um roteiro de vídeo para Instagram Reels de 60 segundos sobre {{tema}}.">Roteiro de Reels</option>
-                <option value="Crie uma sequência de 5 e-mails de vendas para um lançamento de infoproduto.">Sequência de E-mails</option>
-                <option value="Resuma a transcrição fornecida em 5 tópicos acionáveis para uma equipe de gestão.">Resumo de Transcrição</option>
-                <option value="Desenvolva um artigo de blog de 1500 palavras otimizado para a palavra-chave {{keyword}}.">Artigo de Blog SEO</option>
-                <option value="Documente o código fornecido, explicando cada função e seus parâmetros de entrada/saída.">Documentação de Código</option>
-                <option value="Traduza o texto para o inglês, adaptando gírias para soar como um nativo de Nova York.">Tradução Adaptada</option>
-                <option value="Crie uma lista de 20 ideias de títulos magnéticos para um vídeo no YouTube sobre {{assunto}}.">Títulos de YouTube</option>
-                <option value="Analise o feedback dos clientes e identifique os 3 principais pontos de dor citados.">Análise de Feedback</option>
-                <option value="Crie um plano de aula completo para ensinar {{conceito}} para iniciantes.">Plano de Aula</option>
-                <option value="Escreva uma descrição de produto persuasiva focada em benefícios, não apenas recursos.">Descrição de Produto</option>
-            </select>
-            <textarea id="roteiro" placeholder="O que a IA deve fazer?"></textarea>
-        </div>
-
-        <!-- OBJETIVO -->
-        <div class="field-group">
-            <label>Objetivo (O) <span>Resultado</span></label>
-            <select onchange="fillField('objetivo', this.value)">
-                <option value="">-- Selecione 10 Exemplos --</option>
-                <option value="O objetivo final é converter leads frios em compradores através de urgência e prova social.">Conversão de Vendas</option>
-                <option value="O objetivo é simplificar um conceito complexo para que uma criança de 10 anos entenda.">Simplificação Educativa</option>
-                <option value="O objetivo é reduzir a latência de resposta, fornecendo apenas a informação direta e factual.">Eficiência de Resposta</option>
-                <option value="O objetivo é gerar engajamento imediato nos primeiros 3 segundos do conteúdo.">Retenção de Audiência</option>
-                <option value="O objetivo é criar autoridade instantânea para o Expert no nicho de {{nicho}}.">Construção de Autoridade</option>
-                <option value="O objetivo é resolver a dúvida do cliente de forma que ele se sinta ouvido e valorizado.">Encantamento do Cliente</option>
-                <option value="O objetivo é otimizar o código para que ele consuma o mínimo de memória possível.">Otimização Técnica</option>
-                <option value="O objetivo é provocar uma reflexão profunda no leitor sobre {{tema_filosofico}}.">Reflexão/Insight</option>
-                <option value="O objetivo é organizar o caos de informações da transcrição em um guia passo a passo.">Organização de Dados</option>
-                <option value="O objetivo é criar um efeito 'uau' através de uma metáfora surpreendente e inédita.">Criatividade/Impacto</option>
-            </select>
-            <textarea id="objetivo" placeholder="Qual o porquê desta tarefa?"></textarea>
+            <textarea id="persona" placeholder="Quem a IA deve ser?"></textarea>
         </div>
 
         <!-- MODELO -->
-        <div class="field-group">
-            <label>Modelo (M) <span>Formato</span></label>
-            <select onchange="fillField('modelo', this.value)">
-                <option value="">-- Selecione 10 Exemplos --</option>
-                <option value="Apresente o resultado em uma tabela Markdown com colunas para: Item, Vantagem e Preço.">Tabela Markdown</option>
-                <option value="Estrutura de 10 slides, cada um com um título em negrito e 3 tópicos curtos.">Estrutura de Slides</option>
-                <option value="Formato JSON estrito para que os dados possam ser lidos por uma API externa.">Formato JSON</option>
-                <option value="Lista numerada de passos, usando negrito para os termos principais.">Lista de Passos</option>
-                <option value="Um parágrafo único de no máximo 300 caracteres (estilo sumário executivo).">Sumário Executivo</option>
-                <option value="Diálogo socrático entre duas personas que debatem o tema.">Diálogo de Personas</option>
-                <option value="Texto em Markdown usando cabeçalhos (H1, H2) e listas de marcadores.">Markdown Estruturado</option>
-                <option value="Formato de FAQ com Pergunta em negrito e Resposta logo abaixo.">Formato FAQ</option>
-                <option value="Código Python funcional com comentários explicativos em cada linha.">Código Comentado</option>
-                <option value="Script de áudio com marcações de tempo (ex: [00:10] Narrador: ...).">Script com Timestamp</option>
+        <div>
+            <div class="field-header">
+                <label>Modelo (M) <span class="help-btn" onclick="ajuda('modelo')">?</span></label>
+            </div>
+            <select onchange="preencher('modelo', this.value)">
+                <option value="">-- Exemplos de Formato --</option>
+                <option value="Tabela Markdown com colunas para: Item, Vantagem e Preço.">Tabela Markdown</option>
+                <option value="Estrutura de 10 slides, cada um com título e 3 tópicos curtos.">Slides</option>
+                <option value="Formato JSON estrito para integração de sistemas.">JSON</option>
+                <option value="Lista numerada de passos com termos principais em negrito.">Lista de Passos</option>
+                <option value="Sumário executivo de no máximo 500 caracteres.">Sumário Executivo</option>
+                <option value="Diálogo entre duas personas que debatem o tema.">Diálogo</option>
+                <option value="Markdown estruturado com cabeçalhos H1 e H2.">Markdown Estruturado</option>
+                <option value="Formato FAQ com perguntas em negrito.">FAQ</option>
+                <option value="Código funcional com comentários linha a linha.">Código Comentado</option>
+                <option value="Roteiro com marcações de tempo (timestamps).">Roteiro com Tempo</option>
             </select>
-            <textarea id="modelo" placeholder="Como o texto deve ser entregue?"></textarea>
+            <textarea id="modelo" placeholder="Como a resposta deve ser entregue?"></textarea>
         </div>
 
-        <!-- PANORAMA -->
-        <div class="field-group full-width">
-            <label>Panorama (P) <span>Contexto e {{Variáveis}}</span></label>
-            <select onchange="fillField('panorama', this.value)">
-                <option value="">-- Selecione 10 Exemplos --</option>
-                <option value="O público-alvo são empreendedores B2B que faturam mais de R$ 10k/mês e sofrem com falta de tempo.">Empreendedores B2B</option>
-                <option value="O produto é um curso online de R$ 997,00 com garantia de 30 dias e 3 bônus exclusivos.">Dados do Infoproduto</option>
-                <option value="Aqui está a transcrição da aula de 3 horas que servirá de base: {{transcricao}}">Variável de Transcrição</option>
-                <option value="A empresa atua no setor de saúde suplementar e deve seguir normas rígidas de compliance.">Setor de Saúde</option>
-                <option value="Considere o cenário de mercado atual onde a IA está automatizando tarefas operacionais.">Cenário de Mercado</option>
-                <option value="O tom da marca é 'rebelde, mas profissional', focado em resultados fora da curva.">Tom de Marca Específico</option>
-                <option value="Use os seguintes dados brutos para análise: {{base_de_dados_clientes}}">Base de Dados Externa</option>
-                <option value="A audiência é da Geração Z, prefere textos curtos, visuais e com uso moderado de emojis.">Perfil Geração Z</option>
-                <option value="Este conteúdo será postado no LinkedIn, portanto deve ser profissional e gerar discussão nos comentários.">Contexto LinkedIn</option>
-                <option value="O concorrente principal oferece X, nós oferecemos Y como diferencial competitivo.">Análise de Concorrência</option>
+        <!-- ROTEIRO (GRANDE) -->
+        <div>
+            <div class="field-header">
+                <label>Roteiro (R) <span class="help-btn" onclick="ajuda('roteiro')">?</span></label>
+            </div>
+            <select onchange="preencher('roteiro', this.value)">
+                <option value="">-- Exemplos de Tarefa --</option>
+                <option value="Escreva um roteiro de vídeo para Instagram Reels de 60 segundos sobre {{tema}}.">Reels</option>
+                <option value="Crie uma sequência de 5 e-mails de vendas para lançamento.">E-mails de Vendas</option>
+                <option value="Resuma a transcrição em 5 tópicos acionáveis.">Resumo</option>
+                <option value="Desenvolva um artigo de blog de 1500 palavras focado em {{palavra_chave}}.">Artigo SEO</option>
+                <option value="Documente o código fornecido explicando cada função.">Documentação</option>
+                <option value="Traduza para o inglês adaptando gírias para o público de NY.">Tradução</option>
+                <option value="Crie 20 ideias de títulos magnéticos para YouTube.">Títulos YouTube</option>
+                <option value="Analise o feedback e identifique 3 pontos de dor.">Análise de Feedback</option>
+                <option value="Crie um plano de aula completo sobre {{conceito}}.">Plano de Aula</option>
+                <option value="Escreva uma descrição persuasiva focada em benefícios.">Descrição de Produto</option>
             </select>
-            <textarea id="panorama" rows="4" placeholder="Dados extras ou use {{variavel}} para preencher depois..."></textarea>
+            <textarea id="roteiro" placeholder="O que deve ser feito?"></textarea>
+        </div>
+
+        <!-- OBJETIVO (GRANDE) -->
+        <div>
+            <div class="field-header">
+                <label>Objetivo (O) <span class="help-btn" onclick="ajuda('objetivo')">?</span></label>
+            </div>
+            <select onchange="preencher('objetivo', this.value)">
+                <option value="">-- Exemplos de Objetivo --</option>
+                <option value="Converter leads frios através de urgência e prova social.">Conversão</option>
+                <option value="Simplificar um conceito para uma criança de 10 anos.">Simplificação</option>
+                <option value="Fornecer apenas informação direta e factual (latência baixa).">Eficiência</option>
+                <option value="Gerar retenção imediata nos primeiros 3 segundos.">Retenção</option>
+                <option value="Criar autoridade instantânea no nicho de {{nicho}}.">Autoridade</option>
+                <option value="Resolver a dúvida para que o cliente se sinta ouvido.">Encantamento</option>
+                <option value="Otimizar o consumo de memória do script.">Otimização</option>
+                <option value="Provocar reflexão profunda sobre {{tema}}.">Insight</option>
+                <option value="Organizar o caos da transcrição em um guia.">Organização</option>
+                <option value="Criar um efeito 'uau' com uma metáfora inédita.">Criatividade</option>
+            </select>
+            <textarea id="objetivo" placeholder="Por que fazer isso?"></textarea>
+        </div>
+
+        <!-- PANORAMA (GRANDE) -->
+        <div class="full-width">
+            <div class="field-header">
+                <label>Panorama / Contexto (P) <span class="help-btn" onclick="ajuda('panorama')">?</span></label>
+            </div>
+            <select onchange="preencher('panorama', this.value)">
+                <option value="">-- Exemplos de Contexto --</option>
+                <option value="O público são empreendedores B2B que faturam mais de R$ 10k/mês.">Público B2B</option>
+                <option value="Curso de R$ 997,00 com 30 dias de garantia e 3 bônus.">Dados de Oferta</option>
+                <option value="Transcrição de mentoria de 3 horas para análise: {{transcricao}}">Transcrição Longa</option>
+                <option value="Empresa do setor de saúde que segue normas de compliance.">Compliance Saúde</option>
+                <option value="Considere a IA automatizando tarefas operacionais no mercado atual.">Cenário IA</option>
+                <option value="Tom de marca rebelde, mas profissional, focado em resultados.">Tom de Marca</option>
+                <option value="Use estes dados brutos: {{base_clientes}}">Dados Externos</option>
+                <option value="Audiência Geração Z, prefere textos curtos e emojis.">Perfil Gen Z</option>
+                <option value="Conteúdo para LinkedIn visando gerar discussão nos comentários.">Contexto LinkedIn</option>
+                <option value="Diferencial competitivo: Nós oferecemos Y enquanto o mercado faz X.">Vantagem Competitiva</option>
+            </select>
+            <textarea id="panorama" placeholder="Contexto, dados ou use {{variáveis}}..."></textarea>
         </div>
 
         <!-- TRANSFORMAR -->
-        <div class="field-group full-width">
-            <label>Transformar (T) <span>Refinamento e Segurança</span></label>
-            <select onchange="fillField('transformar', this.value)">
-                <option value="">-- Selecione 10 Exemplos --</option>
-                <option value="Use um tom amigável e empático; evite terminologias técnicas complexas.">Tom Amigável</option>
-                <option value="Se você não encontrar a resposta nos dados fornecidos, diga explicitamente que não sabe.">Anti-Alucinação Estrita</option>
-                <option value="Revise o texto 3 vezes para garantir que não haja erros gramaticais ou frases ambíguas.">Revisão Tripla</option>
-                <option value="Certifique-se de que nenhum parágrafo tenha mais de 4 linhas para facilitar a leitura.">Legibilidade Máxima</option>
-                <option value="Apresente 3 variações diferentes para o título, variando o nível de curiosidade.">Múltiplas Variações</option>
-                <option value="Mantenha a conformidade com as diretrizes éticas do NIST AI RMF.">Conformidade NIST</option>
-                <option value="Substitua adjetivos genéricos por verbos de ação poderosos.">Refinamento de Copy</option>
-                <option value="Incorpore uma chamada para ação (CTA) sutil ao final de cada seção.">CTAs por Seção</option>
-                <option value="Pense como um crítico cético antes de finalizar e ajuste os pontos fracos do argumento.">Auto-Crítica</option>
-                <option value="Use analogias com o mundo dos esportes para explicar os benefícios do produto.">Uso de Analogias</option>
+        <div class="full-width">
+            <div class="field-header">
+                <label>Transformar (T) <span class="help-btn" onclick="ajuda('transformar')">?</span></label>
+            </div>
+            <select onchange="preencher('transformar', this.value)">
+                <option value="">-- Exemplos de Refinamento --</option>
+                <option value="Use tom amigável; evite jargões técnicos.">Tom Amigável</option>
+                <option value="Se não souber, diga 'Não possuo essa informação'.">Anti-Alucinação</option>
+                <option value="Revise 3 vezes para eliminar ambiguidades.">Revisão Rigorosa</option>
+                <option value="Parágrafos de no máximo 4 linhas.">Legibilidade</option>
+                <option value="Gere 3 variações de títulos com níveis de curiosidade diferentes.">Variações</option>
+                <option value="Siga as diretrizes éticas do NIST AI RMF.">Segurança NIST</option>
+                <option value="Substitua adjetivos por verbos de ação.">Refinamento de Copy</option>
+                <option value="Adicione uma CTA sutil ao final de cada seção.">CTAs</option>
+                <option value="Pense como um crítico cético e ajuste os pontos fracos.">Autocrítica</option>
+                <option value="Use analogias esportivas para explicar os benefícios.">Analogias</option>
             </select>
             <textarea id="transformar" placeholder="Regras de estilo ou feedbacks..."></textarea>
         </div>
     </div>
 
-    <button onclick="gerarPrompt()">Gerar Prompt Estruturado V3.2 🚀</button>
+    <p class="footer-disclaimer">
+        Garantia EUREKA: Este prompt implementa protocolos automáticos de Cadeia de Pensamento (CoT), Árvore de Pensamentos (ToT), Verificação de Fatos (CoVe) e Governança NIST AI RMF.
+    </p>
 
-    <div id="output-container">
-        <label>Seu Prompt Final (Copie e use):</label>
+    <div class="button-group">
+        <button class="btn-generate" onclick="gerarPrompt()">Gerar Prompt Estruturado 🚀</button>
+        <button id="btnCopy" class="btn-copy" onclick="copiarPrompt()">Copiar para área de transferência 📋</button>
+        <button id="btnSave" class="btn-save" onclick="salvarPrompt()">Salvar em Arquivo 💾</button>
+    </div>
+
+    <div id="output-area">
         <div id="finalPrompt">O prompt aparecerá aqui...</div>
     </div>
 </div>
 
 <script>
-    function fillField(id, value) {
-        if(value) {
-            document.getElementById(id).value = value;
+    const explicacoes = {
+        persona: "PERSONA (P): Define quem a IA é. 'Dê um cargo' e experiência para ela. Ex: 'Você é um copywriter sênior'. Isso direciona o tom e o vocabulário.",
+        modelo: "MODELO (M): O formato da entrega. Especifique se quer em tabelas, lista, código ou slides. Define a estrutura visual da resposta.",
+        roteiro: "ROTEIRO (R): A tarefa principal. O que a IA deve fazer exatamente? Ex: 'Escreva um e-mail'. Seja direto no comando.",
+        objetivo: "OBJETIVO (O): O 'porquê'. O que você quer alcançar? Ex: 'Vender um produto' ou 'Simplificar um tema'. Ajuda a IA a focar no resultado.",
+        panorama: "PANORAMA (P): O contexto e os dados. Use {{variáveis}} para marcar onde dados (como transcrições) serão colados. É o 'combustível' do prompt.",
+        transformar: "TRANSFORMAR (T): Refinamentos e regras. Como você quer o estilo (amigável, formal)? O que ela NÃO deve fazer? Inclui segurança anti-alucinação."
+    };
+
+    function ajuda(campo) { alert(explicacoes[campo]); }
+
+    function preencher(id, valor) { if(valor) document.getElementById(id).value = valor; }
+
+    function gerarPrompt() {
+        const p = document.getElementById('persona').value;
+        const r = document.getElementById('roteiro').value;
+        const o = document.getElementById('objetivo').value;
+        const m = document.getElementById('modelo').value;
+        const pan = document.getElementById('panorama').value;
+        const t = document.getElementById('transformar').value;
+
+        let res = `### ESTRUTURA P.R.O.M.P.T. ATIVADA\n\n`;
+        if(p) res += `<persona>\n${p}\n</persona>\n\n`;
+        if(pan) res += `<contexto_dados>\n${pan}\n</contexto_dados>\n\n`;
+        if(r) res += `<tarefa>\n${r}\n</tarefa>\n\n`;
+        if(o) res += `<objetivo>\n${o}\n</objetivo>\n\n`;
+        if(m) res += `<formato_saida>\n${m}\n</formato_saida>\n\n`;
+        if(t) res += `<refinamentos>\n${t}\n</refinamentos>\n\n`;
+
+        res += `### GARANTIA EUREKA: PROTOCOLOS AVANÇADOS\n`;
+        res += `1. [CoT] Pense passo a passo antes de responder.\n`;
+        res += `2. [ToT] Explore múltiplas linhas de raciocínio.\n`;
+        res += `3. [CoVe] Verifique fatos contra o contexto fornecido.\n`;
+        res += `4. [NIST] Siga a governança de segurança e evite alucinações.`;
+
+        document.getElementById('finalPrompt').innerText = res;
+        document.getElementById('btnCopy').style.display = 'block';
+        document.getElementById('btnSave').style.display = 'block';
+
+        if(confirm("Prompt gerado com sucesso! Deseja salvá-lo em seu computador?")) {
+            salvarPrompt();
         }
     }
 
-    function gerarPrompt() {
-        const fields = {
-            p: document.getElementById('persona').value,
-            r: document.getElementById('roteiro').value,
-            o: document.getElementById('objetivo').value,
-            m: document.getElementById('modelo').value,
-            pan: document.getElementById('panorama').value,
-            t: document.getElementById('transformar').value
-        };
+    function copiarPrompt() {
+        const texto = document.getElementById('finalPrompt').innerText;
+        navigator.clipboard.writeText(texto).then(() => alert("Copiado para a área de transferência!"));
+    }
 
-        let promptOutput = `### ESTRUTURA P.R.O.M.P.T. ATIVADA\n\n`;
+    function salvarPrompt() {
+        const texto = document.getElementById('finalPrompt').innerText;
+        const agora = new Date();
+        const dataStr = agora.toLocaleDateString().replace(/\//g, '-') + "_" + agora.getHours() + "h" + agora.getMinutes();
+        const nome = prompt("Dê um nome para o seu prompt:", "MeuPrompt");
+        const filename = `EurekaV3.2_${nome}_${dataStr}.txt`;
         
-        if(fields.p) promptOutput += `<persona>\n${fields.p}\n</persona>\n\n`;
-        if(fields.pan) promptOutput += `<contexto_dados>\n${fields.pan}\n</contexto_dados>\n\n`;
-        if(fields.r) promptOutput += `<tarefa>\n${fields.r}\n</tarefa>\n\n`;
-        if(fields.o) promptOutput += `<objetivo_final>\n${fields.o}\n</objetivo_final>\n\n`;
-        if(fields.m) promptOutput += `<formato_saida>\n${fields.m}\n</formato_saida>\n\n`;
-        if(fields.t) promptOutput += `<refinamentos_estilo>\n${fields.t}\n</refinamentos_estilo>\n\n`;
-
-        promptOutput += `### GARANTIA EUREKA: PROTOCOLOS DE SEGURANÇA E RACIOCÍNIO\n`;
-        promptOutput += `1. [CoT] Execute o raciocínio passo a passo (Chain of Thought) internamente antes da saída.\n`;
-        promptOutput += `2. [ToT] Explore múltiplas linhagens de pensamento (Árvore de Pensamentos) para a melhor solução.\n`;
-        promptOutput += `3. [CoVe] Verifique fatos contra o <contexto_dados>. Se não houver informação, declare ignorância.\n`;
-        promptOutput += `4. [NIST] Mantenha transparência, evite alucinações e siga a governança NIST AI RMF.\n`;
-        promptOutput += `5. [Markdown] Organize a resposta final usando formatação Markdown para clareza visual.`;
-
-        document.getElementById('finalPrompt').innerText = promptOutput;
+        const blob = new Blob([texto], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
     }
 </script>
 
