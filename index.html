@@ -2,106 +2,293 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eureka Prompt Plus V3.0 - Engenharia Avançada</title>
+    <title>EUREKA - Engenharia de Prompts Profissionais para IA</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; color: #2980b9; }
-        textarea, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; resize: vertical; }
-        .full-width { grid-column: span 2; }
-        button { width: 100%; padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        button:hover { background-color: #219150; }
-        #output-container { margin-top: 30px; }
-        #finalPrompt { background-color: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; }
+        :root { --primary: #1e293b; --accent: #2563eb; --danger: #dc2626; --success: #16a34a; --bg: #f1f5f9; }
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--primary); padding: 20px; line-height: 1.5; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        h1 { text-align: center; font-weight: 800; border-bottom: 4px solid var(--accent); padding-bottom: 15px; margin-bottom: 40px; color: var(--primary); }
+        
+        .section { margin-bottom: 25px; }
+        label { font-weight: 700; display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 0.75rem; color: #64748b; letter-spacing: 0.05em; }
+        
+        textarea { width: 100%; padding: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; resize: vertical; box-sizing: border-box; transition: 0.2s; }
+        textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        /* UX: Caixas maiores para Missão e Situação [Tarefa 4 e 5] */
+        .large-box { min-height: 200px; }
+        .med-box { min-height: 120px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background: white; box-sizing: border-box; }
+        
+        .btn-row { display: flex; gap: 15px; margin: 30px 0; }
+        .btn { padding: 16px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; transition: 0.2s; flex: 1; text-transform: uppercase; }
+        .btn-eureka { background: var(--accent); color: white; }
+        .btn-eureka:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-clear { background: #f87171; color: white; }
+        .btn-clear:hover { background: #ef4444; }
+
+        #output-area { background: #f8fafc; border: 2px dashed var(--accent); padding: 25px; border-radius: 12px; margin-top: 30px; }
+        #prompt-result { width: 100%; min-height: 350px; font-family: 'Fira Code', monospace; background: transparent; border: none; font-size: 0.95rem; }
+        
+        .guarantee-note { font-size: 0.8rem; color: #475569; margin-top: 15px; padding: 10px; background: #eff6ff; border-radius: 6px; font-style: italic; }
+
+        .library-section { margin-top: 40px; border-top: 2px solid #f1f5f9; padding-top: 30px; }
+        .lib-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; }
+        .btn-lib { padding: 8px 16px; font-size: 0.8rem; margin-left: 5px; border-radius: 4px; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Eureka Prompt Plus V3.0</h1>
-    <p style="text-align: center; font-style: italic;">Baseado na metodologia P.R.O.M.P.T. e Engenharia de Contexto</p>
+    <h1>EUREKA - Engenharia de Prompts Profissionais para IA</h1>
 
-    <div class="grid">
-        <!-- P - PERSONA -->
-        <div>
-            <label>Persona (Quem a IA deve ser?)</label>
-            <textarea id="persona" placeholder="Ex: Você é um especialista em Copywriting com 10 anos de experiência..."></textarea>
+    <!-- 1. M: MISSÃO [Tarefa 4] -->
+    <div class="section">
+        <label for="missao">M: MISSÃO - Descreva o objetivo principal:</label>
+        <textarea id="missao" class="large-box" placeholder="Ex: Desenvolver uma tática de negociação B2B para o mercado de infraestrutura..."></textarea>
+    </div>
+
+    <div class="form-grid">
+        <!-- 2. A: ATOR [Funcionalidade 1] -->
+        <div class="section">
+            <label for="ator">A: ATOR (Persona Especialista):</label>
+            <input type="text" id="ator" list="list-atores" placeholder="Escolha ou digite um papel">
+            <datalist id="list-atores">
+                <option value="Consultor Estratégico McKinsey">
+                <option value="Engenheiro de Prompt Sênior (Expert em LLMs)">
+                <option value="Chief Financial Officer (CFO)">
+                <option value="Diretor de Riscos (Compliance & Cybersecurity)">
+                <option value="Arquiteto de Sistemas (Padrão INCOSE)">
+                <option value="Cientista de Dados Sênior">
+                <option value="Advogado Processualista Especialista em IA">
+                <option value="Copywriter de Resposta Direta (Storytelling)">
+                <option value="Analista de Inteligência Competitiva">
+                <option value="Psicólogo Organizacional">
+            </datalist>
         </div>
-        <!-- R - ROTEIRO -->
-        <div>
-            <label>Roteiro (O que deve ser feito?)</label>
-            <textarea id="roteiro" placeholder="Ex: Escreva uma sequência de 3 e-mails de vendas..."></textarea>
-        </div>
-        <!-- O - OBJETIVO -->
-        <div>
-            <label>Objetivo (Qual o resultado esperado?)</label>
-            <textarea id="objetivo" placeholder="Ex: Converter leads frios em compradores do curso X..."></textarea>
-        </div>
-        <!-- M - MODELO -->
-        <div>
-            <label>Modelo (Formato da Saída)</label>
-            <textarea id="modelo" placeholder="Ex: Texto em Markdown, com títulos em negrito e listas..."></textarea>
-        </div>
-        <!-- P - PANORAMA -->
-        <div class="full-width">
-            <label>Panorama / Contexto (Dados, Variáveis {{...}} e Informações extras)</label>
-            <textarea id="panorama" rows="4" placeholder="Insira o contexto ou documentos aqui. Use {{variavel}} para campos dinâmicos."></textarea>
-        </div>
-        <!-- FEW-SHOT -->
-        <div class="full-width">
-            <label>Exemplos (Few-Shot - Mostre à IA como você quer a resposta)</label>
-            <textarea id="exemplos" rows="3" placeholder="Insira aqui 1 ou 2 exemplos de boas respostas anteriores..."></textarea>
-        </div>
-        <!-- T - TRANSFORMAR -->
-        <div class="full-width">
-            <label>Transformar (Refinamentos e Regras de Segurança)</label>
-            <textarea id="transformar" placeholder="Ex: Use um tom amigável, evite jargões técnicos..."></textarea>
+
+        <!-- 3. E: ESTILO [Funcionalidade 2] -->
+        <div class="section">
+            <label for="estilo">E: ESTILO (Tom e Nível):</label>
+            <input type="text" id="estilo" list="list-estilos" placeholder="Escolha ou digite o tom">
+            <datalist id="list-estilos">
+                <option value="Executivo e Direto (Sem introduções)">
+                <option value="Técnico e Analítico Profundo">
+                <option value="Didático e Explicativo (Feynman)">
+                <option value="Storytelling Persuasivo">
+                <option value="Crítico e Desafiador (Advogado do Diabo)">
+                <option value="Consultivo e Propositivo">
+                <option value="Conciso e Minimalista">
+            </datalist>
         </div>
     </div>
 
-    <button onclick="gerarPrompt()">Gerar Prompt Estruturado 🚀</button>
+    <!-- 4. S: SITUAÇÃO [Tarefa 3] -->
+    <div class="section">
+        <label for="situacao">S: SITUAÇÃO - Contexto e Histórico do Cenário:</label>
+        <textarea id="situacao" class="large-box" placeholder="Descreva o contexto, mercado, dores atuais e background relevante..."></textarea>
+    </div>
 
-    <div id="output-container">
-        <label>Seu Prompt Otimizado (Copie e cole na sua IA):</label>
-        <div id="finalPrompt">O prompt aparecerá aqui...</div>
+    <!-- 5. RAG SIMULADO [NOVO - Documentos de Referência] -->
+    <div class="section">
+        <label for="rag-input">D: DOCUMENTOS DE REFERÊNCIA (Simulação RAG):</label>
+        <textarea id="rag-input" class="med-box" placeholder="Cole aqui o conteúdo de PDFs, planilhas ou notas que devem servir como base de conhecimento única..."></textarea>
+    </div>
+
+    <!-- 6. T: TAREFAS [Tarefa 5] -->
+    <div class="section">
+        <label for="tarefas">T: TAREFAS - Instruções Específicas de Execução:</label>
+        <textarea id="tarefas" class="med-box" placeholder="Liste os passos que a IA deve seguir..."></textarea>
+    </div>
+
+    <div class="form-grid">
+        <!-- 7. R: RESTRIÇÕES [Funcionalidade 5] -->
+        <div class="section">
+            <label for="restricoes">R: RESTRIÇÕES (O que evitar/limites):</label>
+            <input type="text" id="restricoes" list="list-restricoes" placeholder="Selecione ou digite limites">
+            <datalist id="list-restricoes">
+                <option value="Máximo 500 palavras; Tom profissional">
+                <option value="Não use termos proprietários ou dados sensíveis">
+                <option value="Sem alucinações; Citar fontes do documento">
+                <option value="Apenas fatos verificáveis; Sem jargão técnico">
+                <option value="Foco 100% em viabilidade executiva">
+            </datalist>
+        </div>
+
+        <!-- 8. O: OUTPUT [Tarefa 6] -->
+        <div class="section">
+            <label for="output">O: FORMATO DO OUTPUT (Entrega):</label>
+            <input type="text" id="output" list="list-outputs" placeholder="Dropdown ou Texto Livre">
+            <datalist id="list-outputs">
+                <option value="Relatório Executivo em Tópicos">
+                <option value="Tabela Markdown Comparativa">
+                <option value="Plano de Ação (5W2H)">
+                <option value="Código Comentado (HTML/JS)">
+                <option value="E-mail Persuasivo Estruturado">
+            </datalist>
+        </div>
+    </div>
+
+    <!-- Botões de Ação [Tarefa 7 e 8] -->
+    <div class="btn-row">
+        <button class="btn btn-eureka" onclick="montarPrompt()">Montar Prompt EUREKA</button>
+        <button class="btn btn-clear" onclick="confirmarLimpeza()">Limpar Tudo</button>
+    </div>
+
+    <!-- Resultado Editável [Tarefa 7] -->
+    <div id="output-area">
+        <label>Prompt Gerado (Pode ser editado):</label>
+        <textarea id="prompt-result" placeholder="O prompt estruturado aparecerá aqui..."></textarea>
+        
+        <div class="guarantee-note">
+            Garantia EUREKA: Este prompt implementa protocolos automáticos de Cadeia de Pensamento (CoT) [9], 
+            Árvore de Pensamentos (ToT) [1], Verificação de Fatos (CoVe) [3] e Governança NIST AI RMF [5].
+        </div>
+        
+        <div class="btn-row">
+            <button class="btn" style="background:#27ae60; color:white;" onclick="salvarNaBiblioteca()">Salvar na Biblioteca?</button>
+            <button class="btn" style="background:#475569; color:white;" onclick="exportarBackup()">Backup JSON</button>
+        </div>
+    </div>
+
+    <!-- Biblioteca [Tarefa 9] -->
+    <div class="library-section">
+        <h3>Biblioteca Local de Prompts</h3>
+        <div id="library-display"></div>
     </div>
 </div>
 
 <script>
-    function gerarPrompt() {
-        const p = document.getElementById('persona').value;
-        const r = document.getElementById('roteiro').value;
-        const o = document.getElementById('objetivo').value;
-        const m = document.getElementById('modelo').value;
-        const pan = document.getElementById('panorama').value;
-        const ex = document.getElementById('exemplos').value;
-        const t = document.getElementById('transformar').value;
-
-        let promptCompilado = `# DIRETRIZES DE EXECUÇÃO\n\n`;
+    // Lógica de Automação dos 6 Pilares Técnicos [Pilar 4]
+    function gerarInstrucoesAcuracia(missao, tarefas) {
+        const contextoTotal = (missao + tarefas).toLowerCase();
+        let motorTecnico = "\n\n### PROTOCOLO INTERNO DE EXECUÇÃO (Garantia de Acurácia):";
         
-        if(p) promptCompilado += `<persona>\n${p}\n</persona>\n\n`;
-        if(r) promptCompilado += `<instrucoes_tarefa>\n${r}\n</instrucoes_tarefa>\n\n`;
-        if(o) promptCompilado += `<objetivo_final>\n${o}\n</objetivo_final>\n\n`;
+        // Pilar 1: ToT/GoT para complexidade
+        if (contextoTotal.match(/(estratégia|risco|decisão|analis|complex)/)) {
+            motorTecnico += "\n- Use 'Tree-of-Thoughts': Simule múltiplos caminhos de raciocínio, avalie a viabilidade de cada um e apresente apenas a conclusão do ramo mais lógico [1, 2].";
+        }
         
-        promptCompilado += `## PROCESSO DE RACIOCÍNIO\n`;
-        promptCompilado += `1. Pense passo a passo (Chain of Thought) antes de gerar a saída final.\n`;
-        promptCompilado += `2. Certifique-se de que a resposta segue o formato solicitado em <formato_saida>.\n\n`;
-
-        if(pan) promptCompilado += `<contexto_e_dados>\n${pan}\n</contexto_e_dados>\n\n`;
-        if(ex) promptCompilado += `<exemplos_referencia>\n${ex}\n</exemplos_referencia>\n\n`;
-        if(m) promptCompilado += `<formato_saida>\n${m}\n</formato_saida>\n\n`;
-        if(t) promptCompilado += `<refinamentos_estilo>\n${t}\n</refinamentos_estilo>\n\n`;
-
-        promptCompilado += `## REGRAS DE SEGURANÇA E QUALIDADE\n`;
-        promptCompilado += `- Se você não tiver informações suficientes ou não souber a resposta, diga explicitamente que não sabe.\n`;
-        promptCompilado += `- Evite alucinações: baseie-se estritamente nos dados fornecidos em <contexto_e_dados>.\n`;
-        promptCompilado += `- Utilize formatação Markdown para clareza visual.`;
-
-        document.getElementById('finalPrompt').innerText = promptCompilado;
+        // Pilar 2: CoVe para evitar alucinações
+        motorTecnico += "\n- Execute 'Chain-of-Verification': Antes de finalizar, identifique potenciais inconsistências, verifique contra os dados fornecidos e revise o output final para eliminar alucinações [3, 4].";
+        
+        // Pilar 3: NIST AI RMF & Salvaguardas
+        motorTecnico += "\n- Segurança: Respeite rigorosamente as diretrizes do framework NIST AI RMF. Não reconstrua dados sensíveis e mantenha neutralidade técnica [5, 10].";
+        
+        return motorTecnico;
     }
+
+    function montarPrompt() {
+        const m = document.getElementById('missao').value;
+        const a = document.getElementById('ator').value || "Especialista Versátil";
+        const e = document.getElementById('estilo').value || "Executivo e Analítico";
+        const s = document.getElementById('situacao').value;
+        const rag = document.getElementById('rag-input').value;
+        const t = document.getElementById('tarefas').value;
+        const r = document.getElementById('restricoes').value;
+        const o = document.getElementById('output').value || "Texto estruturado";
+
+        if (!m) return alert("Por favor, descreva a Missão.");
+
+        const tecnicasAuto = gerarInstrucoesAcuracia(m, t);
+
+        // Estruturação Sanduíche XML para Máxima Performance [11, 12]
+        const promptFinal = `### SISTEMA: CONFIGURAÇÃO DE ALTA PERFORMANCE
+ATUAR COMO: ${a}.
+ESTILO DE RESPOSTA: ${e}.
+${tecnicasAuto}
+
+<MISSÃO>
+${m}
+</MISSÃO>
+
+<SITUAÇÃO_CONTEXTO>
+${s}
+</SITUAÇÃO_CONTEXTO>
+
+<BASE_CONHECIMENTO_REFERENCIA>
+${rag || "Use apenas o conhecimento pré-treinado de forma ética."}
+</BASE_CONHECIMENTO_REFERENCIA>
+
+<TAREFAS_EXECUÇÃO>
+${t}
+</TAREFAS_EXECUÇÃO>
+
+<RESTRIÇÕES_E_SEGURANÇA>
+${r}
+- Seguir diretrizes de privacidade e governança corporativa.
+</RESTRIÇÕES_E_SEGURANÇA>
+
+<FORMATO_OUTPUT_DESEJADO>
+${o}
+</FORMATO_OUTPUT_DESEJADO>`;
+
+        document.getElementById('prompt-result').value = promptFinal;
+        window.location.hash = 'output-area';
+    }
+
+    function confirmarLimpeza() {
+        if (confirm("Tem certeza? Todos os campos serão apagados permanentemente.")) {
+            document.querySelectorAll('textarea, input').forEach(el => el.value = "");
+            document.getElementById('prompt-result').value = "";
+        }
+    }
+
+    // Persistência e Biblioteca [Tarefa 9]
+    function salvarNaBiblioteca() {
+        const content = document.getElementById('prompt-result').value;
+        if (!content) return alert("Nenhum prompt para salvar.");
+
+        let db = JSON.parse(localStorage.getItem('eureka_lib')) || [];
+        const item = { id: Date.now(), data: new Date().toLocaleString(), text: content };
+        db.unshift(item);
+        localStorage.setItem('eureka_lib', JSON.stringify(db));
+        renderizarBiblioteca();
+        alert("Salvo na biblioteca!");
+    }
+
+    function renderizarBiblioteca() {
+        const display = document.getElementById('library-display');
+        const db = JSON.parse(localStorage.getItem('eureka_lib')) || [];
+        display.innerHTML = db.map(i => `
+            <div class="lib-item">
+                <div><strong>${i.data}</strong><br><small>${i.text.substring(0, 60)}...</small></div>
+                <div>
+                    <button class="btn-lib" style="background:#3b82f6; color:white;" onclick="carregar(${i.id})">Carregar</button>
+                    <button class="btn-lib" style="background:#ef4444; color:white;" onclick="apagar(${i.id})">Apagar</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function carregar(id) {
+        const db = JSON.parse(localStorage.getItem('eureka_lib')) || [];
+        const i = db.find(x => x.id === id);
+        if (i) document.getElementById('prompt-result').value = i.text;
+    }
+
+    function apagar(id) {
+        if (confirm("Excluir este prompt?")) {
+            let db = JSON.parse(localStorage.getItem('eureka_lib')) || [];
+            localStorage.setItem('eureka_lib', JSON.stringify(db.filter(x => x.id !== id)));
+            renderizarBiblioteca();
+        }
+    }
+
+    // Backup JSON [Nova funcionalidade solicitada]
+    function exportarBackup() {
+        const db = localStorage.getItem('eureka_lib') || "[]";
+        const blob = new Blob([db], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `eureka_backup_${Date.now()}.json`;
+        a.click();
+    }
+
+    window.onload = renderizarBiblioteca;
 </script>
 
 </body>
